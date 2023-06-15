@@ -7,10 +7,16 @@ const uid = (size = 10): string => {
 };
 
 export class TinyDispatcher {
-  private static listeners: { [key: string]: { [key: string]: any } } = {};
-  private static once: { [key: string]: string } = {};
+  private static instance: TinyDispatcher;
+  private listeners: { [key: string]: { [key: string]: any } } = {};
+  private once: { [key: string]: string } = {};
 
-  static addListener<T>(event: string, handler: (event: string, key: string, value: T) => void, once = false): string {
+  static getInstance(): TinyDispatcher {
+    if (!this.instance) this.instance = new TinyDispatcher();
+    return this.instance;
+  }
+
+  addListener<T>(event: string, handler: (event: string, key: string, value: T) => void, once = false): string {
     if (!this.listeners[event]) {
       this.listeners[event] = {};
     }
@@ -20,7 +26,7 @@ export class TinyDispatcher {
     return key;
   }
 
-  static dispatch<T>(event: string, value?: T): void {
+  dispatch<T>(event: string, value?: T): void {
     if (this.listeners[event]) {
       for (const key in this.listeners[event]) {
         this.listeners[event][key](event, key, value); // eslint-disable-line @typescript-eslint/no-unsafe-call
@@ -32,7 +38,7 @@ export class TinyDispatcher {
     }
   }
 
-  static removeListener(event: string, key: string): boolean {
+  removeListener(event: string, key: string): boolean {
     if (!this.listeners[event]) return false;
     if (this.listeners[event][key]) {
       delete this.listeners[event][key];
@@ -41,13 +47,14 @@ export class TinyDispatcher {
     return false;
   }
 
-  static removeAllListener(event: string): boolean {
+  removeAllListener(event: string): boolean {
     if (!this.listeners[event]) return false;
     delete this.listeners[event];
     return true;
   }
 
-  static cleanup() {
+  cleanup() {
     this.listeners = {};
+    this.once = {};
   }
 }
