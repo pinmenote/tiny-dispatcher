@@ -1,6 +1,6 @@
 {
   "name": "@pinmenote/tiny-dispatcher",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Michal Szczepanski",
   "license": "MIT",
   "description": "tiny event dispatcher",
